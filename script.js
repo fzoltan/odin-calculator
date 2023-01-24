@@ -29,7 +29,7 @@ function operate (num1, num2, operator) {
             return Math.round(multiply(num1, num2) * 10000) / 10000;
             break;
         case "/":
-            return Math.round(divide(num1, num2) * 10000) / 10000;
+            return divide(num1, num2) === "Error" ? "Error! You can't divide by 0!" : Math.round(divide(num1, num2) * 10000) / 10000;
             break;
     }
 }
@@ -52,21 +52,35 @@ function refreshDisplay(){
     currExp.innerHTML = currentExpression;
 }
 
+function clear() {
+    expression = "";
+    currentExpression = "0";
+    num1 = 0;
+    num2 = 0;
+    op = "";
+    refreshDisplay();
+}
+
+function delete_char() {
+    if(currentExpression != "0")
+        currentExpression = currentExpression.slice(0,-1);
+    if(currentExpression === "")
+        currentExpression = "0";
+    refreshDisplay();
+}
+
+function divide_by_0() {
+    alert("You can't divide by 0!");
+    clear();
+    refreshDisplay();
+}
+
 function alterDisplayValue(e) {
     if(e.target.id === "clear") {
-        expression = "";
-        currentExpression = "0";
-        num1 = 0;
-        num2 = 0;
-        op = "";
-        refreshDisplay();
+        clear();
     }
     else if(e.target.id === "delete") {
-        if(currentExpression != "0")
-            currentExpression = currentExpression.slice(0,-1);
-        if(currentExpression === "")
-            currentExpression = "0";
-        refreshDisplay();
+        delete_char();
     }
     else if(e.target.id === "+" || e.target.id === "-" || e.target.id === "/" || e.target.id === "x") {
         if(op === "") {
@@ -79,23 +93,32 @@ function alterDisplayValue(e) {
         else {
             num2 = Number(currentExpression);
             currentExpression = operate(num1, num2, op);
-            op = e.target.id;
-            expression += ` ${num2} =`; 
-            expression = `${currentExpression} ${op}`;
-            refreshDisplay();
-            num1 = currentExpression;
-            currentExpression = "";
-            num2 = 0;
+            if(currentExpression === "Error! You can't divide by 0!")
+                divide_by_0();
+            else {
+                op = e.target.id;
+                expression += ` ${num2} =`; 
+                expression = `${currentExpression} ${op}`;
+                refreshDisplay();
+                num1 = currentExpression;
+                currentExpression = "";
+                num2 = 0;
+            }
         }
     }
     else if(e.target.id === "=") {
         num2 = Number(currentExpression);
         currentExpression = operate(num1, num2, op);
-        expression += ` ${num2} =`; 
-        num1 = num2;
-        num2 = 0;
-        op = "";
-        refreshDisplay();
+        if(currentExpression === "Error! You can't divide by 0!")
+            divide_by_0();
+        else {
+            expression += ` ${num2} =`; 
+            num1 = num2;
+            num2 = 0;
+            op = "";
+            refreshDisplay();
+        }
+
 
     }
     else {
