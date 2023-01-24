@@ -20,16 +20,16 @@ function divide (num1, num2) {
 function operate (num1, num2, operator) {
     switch(operator) {
         case "+":
-            return add(num1, num2);
+            return Math.round(add(num1, num2) * 10000) / 10000;
             break;
         case "-":
-            return subtract(num1, num2);
+            return Math.round(subtract(num1, num2) * 10000) / 10000;
             break;
         case "x":
-            return multiply(num1, num2);
+            return Math.round(multiply(num1, num2) * 10000) / 10000;
             break;
         case "/":
-            return divide(num1, num2);
+            return Math.round(divide(num1, num2) * 10000) / 10000;
             break;
     }
 }
@@ -69,11 +69,24 @@ function alterDisplayValue(e) {
         refreshDisplay();
     }
     else if(e.target.id === "+" || e.target.id === "-" || e.target.id === "/" || e.target.id === "x") {
-        op = e.target.id;
-        expression = `${currentExpression} ${op}`;
-        refreshDisplay();
-        num1 = Number(currentExpression);
-        currentExpression = "0";
+        if(op === "") {
+            op = e.target.id;
+            expression = `${currentExpression} ${op}`;
+            refreshDisplay();
+            num1 = Number(currentExpression);
+            currentExpression = "0";
+        }
+        else {
+            num2 = Number(currentExpression);
+            currentExpression = operate(num1, num2, op);
+            op = e.target.id;
+            expression += ` ${num2} =`; 
+            expression = `${currentExpression} ${op}`;
+            refreshDisplay();
+            num1 = currentExpression;
+            currentExpression = "";
+            num2 = 0;
+        }
     }
     else if(e.target.id === "=") {
         num2 = Number(currentExpression);
@@ -81,6 +94,7 @@ function alterDisplayValue(e) {
         expression += ` ${num2} =`; 
         num1 = num2;
         num2 = 0;
+        op = "";
         refreshDisplay();
 
     }
@@ -91,7 +105,7 @@ function alterDisplayValue(e) {
         else {
             currentExpression += `${e.target.id}`;
         }
-        currExp.innerHTML = currentExpression;
+        refreshDisplay();
     }
 
 }
