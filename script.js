@@ -107,19 +107,25 @@ function alterDisplayValue(e) {
         }
     }
     else if(e.target.id === "=") {
-        num2 = Number(currentExpression);
-        currentExpression = operate(num1, num2, op);
-        if(currentExpression === "Error! You can't divide by 0!")
-            divide_by_0();
-        else {
-            expression += ` ${num2} =`; 
-            num1 = num2;
-            num2 = 0;
-            op = "";
+        if(op === "") {
+            num1 = Number(currentExpression);
+            if(currentExpression === "")
+                currentExpression = "0";
             refreshDisplay();
         }
-
-
+        else {
+            num2 = Number(currentExpression);
+            currentExpression = operate(num1, num2, op);
+            if(currentExpression === "Error! You can't divide by 0!")
+                divide_by_0();
+            else {
+                expression += ` ${num2} =`; 
+                num1 = num2;
+                num2 = 0;
+                op = "";
+                refreshDisplay();
+            }
+        }
     }
     else {
         if(currentExpression === "0") {
